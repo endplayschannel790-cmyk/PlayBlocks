@@ -1,0 +1,684 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PlayBlocks</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080811;color:white;font-family:Arial;overflow:hidden}
+#game{position:fixed;inset:0}
+button{background:#191932;color:white;border:1px solid #3985ff;border-radius:10px;padding:11px;font-weight:bold;cursor:pointer}
+#top{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+#top button{pointer-events:auto}
+.logo{font-size:23px;font-weight:bold;color:#55a1ff;text-shadow:0 0 12px #3985ff}
+#hint{position:fixed;top:65px;left:12px;font-size:12px;color:#ddd;pointer-events:none}
+#crosshair{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:24px;pointer-events:none}
+#hotbar{position:fixed;bottom:17px;left:50%;transform:translateX(-50%);display:flex;gap:5px;background:#101020dd;padding:7px;border-radius:14px;max-width:96vw;overflow-x:auto}
+.slot{width:47px;min-width:47px;height:47px;border:2px solid #555;border-radius:8px;display:grid;place-items:center;font-size:24px}
+.slot.active{border:2px solid #55a1ff;background:#263d69}
+#joystick{position:fixed;left:22px;bottom:105px;width:132px;height:132px;border:2px solid #8da8ff88;border-radius:50%;background:#11152c99;touch-action:none;display:none;box-shadow:0 0 22px #3985ff33}
+#stick{position:absolute;left:39px;top:39px;width:50px;height:50px;border-radius:50%;background:linear-gradient(145deg,#65a5ff,#874bdf);border:2px solid #d8e5ff;box-shadow:0 4px 15px #0008;pointer-events:none}
+#lookTip{position:fixed;right:15px;bottom:65px;color:#dce5ff99;font-size:11px;pointer-events:none}
+@media(pointer:coarse){#joystick{display:block}}
+#actions{position:fixed;right:17px;bottom:105px;display:flex;flex-direction:column;gap:9px}
+#actions button{width:83px;height:46px;font-size:12px}
+#start{position:fixed;inset:0;background:linear-gradient(135deg,#070b20f5,#190d35f5);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;z-index:5}
+.menu-card{width:min(440px,95vw);padding:27px;border:1px solid #4b5acb;background:#0f112aee;border-radius:22px;box-shadow:0 18px 60px #0009}
+#start h1{font-size:clamp(42px,8vw,68px);color:white;margin:8px;text-shadow:0 0 24px #3985ff}
+.tagline{color:#c7c9e8;line-height:1.6;margin:5px 0 24px}
+.menu-buttons{display:grid;gap:11px}
+.menu-buttons button{width:100%;padding:16px;font-size:17px;background:linear-gradient(100deg,#245ec5,#7040bd)}
+.menu-buttons .secondary{background:#191932;border-color:#555b9a}
+#menuPanel{display:none;margin-top:15px;padding:14px;background:#0c1028;border:1px solid #424a8a;border-radius:14px;color:#ddd}
+#menuPanel button{margin:5px}
+.menu-footer{font-size:12px;color:#9295b8;margin-top:18px}
+@media(max-width:600px){#actions{right:10px}#actions button{width:72px} }
+</style>
+</head>
+<body>
+
+<div id="game"></div>
+
+<div id="top">
+<div class="logo">▶ PlayBlocks</div>
+<button onclick="showHome()">HOME</button>
+</div>
+
+<div id="hint">Explore • Build • Create</div>
+<div id="crosshair">+</div>
+
+<div id="joystick"><div id="stick"></div></div>
+<div id="lookTip">DRAG RIGHT SIDE TO LOOK</div>
+
+<div id="actions">
+<button id="break">⛏ BREAK</button>
+<button id="place">＋ PLACE</button>
+<button id="jump">⬆ JUMP</button>
+</div>
+
+<div id="hotbar"></div>
+
+<div id="start">
+<div class="menu-card">
+<div style="font-size:13px;letter-spacing:4px;color:#8eaaff;font-weight:bold">WELCOME TO</div>
+<h1>▶ PlayBlocks</h1>
+<p class="tagline">Explore worlds. Build anything. Make it yours.</p>
+<div class="menu-buttons">
+<button id="play">▶ PLAY</button>
+<button class="secondary" id="worldsBtn">🌍 WORLDS</button>
+<button class="secondary" id="settingsBtn">⚙ SETTINGS</button>
+</div>
+<div id="menuPanel"></div>
+<div class="menu-footer">PLAYBLOCKS • BUILD YOUR OWN WORLD</div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+const game=document.getElementById("game");
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x87bdf0);
+scene.fog=new THREE.Fog(0x87bdf0,32,90);
+
+const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,1000);
+camera.position.set(0,5,8);
+
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+game.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x647080,2));
+
+const sun=new THREE.DirectionalLight(0xffffff,2);
+sun.position.set(10,20,10);
+scene.add(sun);
+
+const geometry=new THREE.BoxGeometry(1,1,1);
+
+const materials={
+Grass:new THREE.MeshLambertMaterial({color:0x55a844}),
+Dirt:new THREE.MeshLambertMaterial({color:0x79502f}),
+Stone:new THREE.MeshLambertMaterial({color:0x888888}),
+Wood:new THREE.MeshLambertMaterial({color:0x98602c}),
+Diamond:new THREE.MeshLambertMaterial({color:0x39dbea}),
+Purple:new THREE.MeshLambertMaterial({color:0x984dff})
+};
+
+let blocks=[];
+let selected="Grass";
+let worldData={};
+let yaw=0,pitch=0;
+let velocity=0;
+let jumping=false;
+let keys={};
+let started=false;
+let joystickX=0;
+let joystickY=0;
+
+const raycaster=new THREE.Raycaster();
+const center=new THREE.Vector2(0,0);
+
+const blockOutline=new THREE.LineSegments(
+new THREE.EdgesGeometry(new THREE.BoxGeometry(1.012,1.012,1.012)),
+new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.8})
+);
+
+scene.add(blockOutline);
+blockOutline.visible=false;
+
+// BLOCK SYSTEM
+
+function addBlock(x,y,z,type="Grass",save=true){
+
+const key=`${x},${y},${z}`;
+
+if(worldData[key])return;
+
+const mesh=new THREE.Mesh(
+geometry,
+materials[type]||materials.Grass
+);
+
+mesh.position.set(x,y,z);
+mesh.userData={key,type};
+
+scene.add(mesh);
+blocks.push(mesh);
+worldData[key]=type;
+
+if(save)saveWorld();
+}
+
+function removeBlock(mesh){
+
+scene.remove(mesh);
+
+blocks=blocks.filter(b=>b!==mesh);
+
+delete worldData[mesh.userData.key];
+
+saveWorld();
+}
+
+// WORLD GENERATION
+
+function generate(){
+
+for(let x=-18;x<=18;x++){
+for(let z=-18;z<=18;z++){
+
+const distance=Math.sqrt(x*x+z*z);
+
+let h=Math.floor(
+Math.sin(x*.22)*1.1+
+Math.cos(z*.2)*1.1+
+Math.sin((x+z)*.13)*.7
+);
+
+if(distance<4)h=0;
+
+for(let y=-3;y<=h;y++){
+
+addBlock(
+x,y,z,
+y===h?"Grass":y>=h-2?"Dirt":"Stone",
+false
+);
+
+}
+
+// TREES
+
+if(distance>6&&Math.random()<.018&&h>=0){
+
+const base=h+1;
+
+for(let y=0;y<3;y++){
+addBlock(x,base+y,z,"Wood",false);
+}
+
+for(let dx=-2;dx<=2;dx++){
+for(let dz=-2;dz<=2;dz++){
+for(let dy=2;dy<=4;dy++){
+
+if(Math.abs(dx)+Math.abs(dz)+(dy===4?1:0)<5){
+
+addBlock(x+dx,base+dy,z+dz,"Grass",false);
+
+}
+}
+}
+}
+}
+
+}
+}
+
+saveWorld();
+}
+
+// SAVE SYSTEM
+
+function saveWorld(){
+
+try{
+localStorage.setItem(
+"playblocks_world",
+JSON.stringify(worldData)
+);
+}catch(e){
+console.warn("Could not save world",e);
+}
+
+}
+
+function loadWorld(){
+
+try{
+
+const saved=JSON.parse(
+localStorage.getItem("playblocks_world")||"null"
+);
+
+if(saved&&typeof saved==="object"){
+
+worldData=saved;
+
+for(const key in saved){
+
+const [x,y,z]=key.split(",").map(Number);
+
+addBlock(x,y,z,saved[key],false);
+
+}
+
+return;
+}
+
+}catch(e){}
+
+generate();
+}
+
+// NEW WORLD
+
+function newWorld(){
+
+if(!confirm("Create a new world? Your current world will be replaced."))return;
+
+worldData={};
+
+blocks.forEach(b=>scene.remove(b));
+blocks=[];
+
+generate();
+
+camera.position.set(0,5,8);
+yaw=0;
+pitch=0;
+
+}
+
+// INVENTORY
+
+const names=Object.keys(materials);
+
+const icons=["🌱","🟫","🪨","🪵","💎","🟣"];
+
+const bar=document.getElementById("hotbar");
+
+names.forEach((name,i)=>{
+
+const el=document.createElement("div");
+
+el.className="slot"+(i===0?" active":"");
+el.textContent=icons[i];
+el.title=name;
+
+el.onclick=()=>{
+
+selected=name;
+
+document.querySelectorAll(".slot").forEach(s=>{
+s.classList.remove("active");
+});
+
+el.classList.add("active");
+
+};
+
+bar.appendChild(el);
+
+});
+
+// BLOCK TARGETING
+
+function targetBlock(){
+
+raycaster.setFromCamera(center,camera);
+
+return raycaster.intersectObjects(blocks,false)[0];
+
+}
+
+// BREAK
+
+function breakBlock(){
+
+const hit=targetBlock();
+
+if(hit&&hit.distance<7){
+
+removeBlock(hit.object);
+
+}
+
+}
+
+// PLACE
+
+function placeBlock(){
+
+const hit=targetBlock();
+
+if(!hit||hit.distance>7)return;
+
+const p=hit.object.position.clone().add(hit.face.normal);
+
+if(p.distanceTo(camera.position)<1.5)return;
+
+addBlock(
+Math.round(p.x),
+Math.round(p.y),
+Math.round(p.z),
+selected
+);
+
+}
+
+document.getElementById("break").onclick=breakBlock;
+document.getElementById("place").onclick=placeBlock;
+
+// JOYSTICK
+
+const joystick=document.getElementById("joystick");
+const stick=document.getElementById("stick");
+
+let joystickPointer=null;
+
+function moveStick(e){
+
+const r=joystick.getBoundingClientRect();
+
+const cx=r.left+r.width/2;
+const cy=r.top+r.height/2;
+
+let dx=e.clientX-cx;
+let dy=e.clientY-cy;
+
+const max=42;
+const len=Math.hypot(dx,dy);
+
+if(len>max){
+
+dx=dx/len*max;
+dy=dy/len*max;
+
+}
+
+joystickX=dx/max;
+joystickY=dy/max;
+
+stick.style.transform=`translate(${dx}px,${dy}px)`;
+
+}
+
+joystick.addEventListener("pointerdown",e=>{
+
+e.preventDefault();
+
+joystickPointer=e.pointerId;
+
+joystick.setPointerCapture(e.pointerId);
+
+moveStick(e);
+
+});
+
+joystick.addEventListener("pointermove",e=>{
+
+if(e.pointerId===joystickPointer)moveStick(e);
+
+});
+
+function resetStick(){
+
+joystickPointer=null;
+joystickX=0;
+joystickY=0;
+
+stick.style.transform="translate(0,0)";
+
+}
+
+joystick.addEventListener("pointerup",resetStick);
+joystick.addEventListener("pointercancel",resetStick);
+
+// JUMP
+
+document.getElementById("jump").onpointerdown=()=>{
+
+if(!jumping){
+
+velocity=.17;
+jumping=true;
+
+}
+
+};
+
+// KEYBOARD
+
+addEventListener("keydown",e=>{
+
+keys[e.key.toLowerCase()]=true;
+
+if(e.code==="Space"&&!jumping){
+
+velocity=.17;
+jumping=true;
+
+}
+
+if(e.code==="KeyF")breakBlock();
+if(e.code==="KeyG")placeBlock();
+
+});
+
+addEventListener("keyup",e=>{
+
+keys[e.key.toLowerCase()]=false;
+
+});
+
+// CAMERA LOOK
+
+let dragging=false;
+let lastX=0;
+let lastY=0;
+
+renderer.domElement.addEventListener("pointerdown",e=>{
+
+if(e.pointerType==="touch"&&e.clientX<175&&e.clientY>innerHeight-270)return;
+
+dragging=true;
+
+lastX=e.clientX;
+lastY=e.clientY;
+
+});
+
+addEventListener("pointerup",()=>dragging=false);
+addEventListener("pointercancel",()=>dragging=false);
+
+addEventListener("pointermove",e=>{
+
+if(!dragging||!started)return;
+
+yaw-=(e.clientX-lastX)*.0045;
+
+pitch-=(e.clientY-lastY)*.0045;
+
+pitch=Math.max(-1.35,Math.min(1.35,pitch));
+
+lastX=e.clientX;
+lastY=e.clientY;
+
+});
+
+renderer.domElement.addEventListener("contextmenu",e=>e.preventDefault());
+
+// HOME MENU
+
+function showHome(){
+
+started=false;
+
+document.getElementById("start").style.display="flex";
+
+blockOutline.visible=false;
+
+}
+
+document.getElementById("play").onclick=()=>{
+
+started=true;
+
+document.getElementById("start").style.display="none";
+
+camera.position.set(0,5,8);
+
+};
+
+// WORLDS MENU
+
+const menuPanel=document.getElementById("menuPanel");
+
+document.getElementById("worldsBtn").onclick=()=>{
+
+menuPanel.style.display="block";
+
+menuPanel.innerHTML=`
+<b>🌍 YOUR WORLDS</b>
+<p>World 1 · Saved on this device</p>
+<button id="enterWorld">PLAY WORLD</button>
+<button id="makeWorld">＋ NEW WORLD</button>
+`;
+
+document.getElementById("enterWorld").onclick=()=>{
+document.getElementById("play").click();
+};
+
+document.getElementById("makeWorld").onclick=()=>{
+
+if(confirm("Create a new world? Your current world will be replaced.")){
+
+newWorld();
+
+document.getElementById("play").click();
+
+}
+
+};
+
+};
+
+// SETTINGS MENU
+
+document.getElementById("settingsBtn").onclick=()=>{
+
+menuPanel.style.display="block";
+
+menuPanel.innerHTML=`
+<b>⚙ SETTINGS</b>
+<p>Graphics: <span id="qualityLabel">High</span></p>
+<button id="qualityBtn">CHANGE GRAPHICS</button>
+<p style="font-size:12px;color:#aaa">
+Drag the left joystick to move.
+Drag the right side to look around.
+Use Break and Place to build.
+</p>
+`;
+
+let high=true;
+
+document.getElementById("qualityBtn").onclick=()=>{
+
+high=!high;
+
+renderer.setPixelRatio(high?Math.min(devicePixelRatio,2):1);
+
+document.getElementById("qualityLabel").textContent=
+high?"High":"Low";
+
+};
+
+};
+
+// GAME LOOP
+
+function animate(){
+
+requestAnimationFrame(animate);
+
+if(started){
+
+camera.rotation.order="YXZ";
+
+camera.rotation.set(pitch,yaw,0);
+
+const speed=.09;
+
+const forward=new THREE.Vector3(
+-Math.sin(yaw),0,-Math.cos(yaw)
+);
+
+const right=new THREE.Vector3(
+Math.cos(yaw),0,-Math.sin(yaw)
+);
+
+const forwardInput=
+(keys.w||keys.arrowup?1:0)-
+(keys.s||keys.arrowdown?1:0)-
+joystickY;
+
+const sideInput=
+(keys.d||keys.arrowright?1:0)-
+(keys.a||keys.arrowleft?1:0)+
+joystickX;
+
+camera.position.addScaledVector(forward,forwardInput*speed);
+camera.position.addScaledVector(right,sideInput*speed);
+
+// Basic jumping and ground height
+
+camera.position.y+=velocity;
+
+velocity-=.008;
+
+if(camera.position.y<3){
+
+camera.position.y=3;
+
+velocity=0;
+
+jumping=false;
+
+}
+
+// Target outline
+
+const aimed=targetBlock();
+
+if(aimed&&aimed.distance<7){
+
+blockOutline.position.copy(aimed.object.position);
+blockOutline.visible=true;
+
+}else{
+
+blockOutline.visible=false;
+
+}
+
+}
+
+renderer.render(scene,camera);
+
+}
+
+// START
+
+loadWorld();
+animate();
+
+// RESIZE
+
+addEventListener("resize",()=>{
+
+camera.aspect=innerWidth/innerHeight;
+
+camera.updateProjectionMatrix();
+
+renderer.setSize(innerWidth,innerHeight);
+
+});
+
+</script>
+</body>
+</html>
