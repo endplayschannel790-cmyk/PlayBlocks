@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>PlayBlocks</title>
 
 <style>
@@ -16,11 +15,7 @@
 html,
 body {
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
+  min-height: 100%;
   background: #080811;
   color: white;
   font-family: Arial, Helvetica, sans-serif;
@@ -37,7 +32,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   transition: opacity 0.8s ease;
 }
 
@@ -46,19 +41,16 @@ body {
   pointer-events: none;
 }
 
-/* PlayBlocks blob */
-
 #blob {
   width: 145px;
   height: 145px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #3985ff 0%,
-      #6b5cff 45%,
-      #984dff 100%
-    );
+  background: linear-gradient(
+    135deg,
+    #3985ff,
+    #6b5cff,
+    #984dff
+  );
 
   border-radius:
     45% 55% 60% 40% /
@@ -69,7 +61,7 @@ body {
   justify-content: center;
 
   box-shadow:
-    0 0 35px rgba(57,133,255,.35),
+    0 0 35px rgba(57,133,255,.4),
     0 0 75px rgba(152,77,255,.25);
 
   animation: twirl 1.4s ease-in-out infinite;
@@ -110,21 +102,17 @@ body {
   }
 }
 
-/* Powered by */
-
 #powered {
   position: absolute;
-
-  opacity: 0;
-  transform: scale(.7);
 
   font-size: 21px;
   font-weight: 600;
 
-  letter-spacing: .4px;
+  opacity: 0;
+  transform: scale(.7);
 
   animation: poweredIn 1s ease forwards;
-  animation-delay: 3.6s;
+  animation-delay: 3.5s;
 }
 
 @keyframes poweredIn {
@@ -140,7 +128,7 @@ body {
 }
 
 /* =========================
-   MAIN APP
+   APP
 ========================= */
 
 #app {
@@ -149,7 +137,7 @@ body {
   background:
     radial-gradient(
       circle at top right,
-      rgba(98,65,255,.12),
+      rgba(98,65,255,.13),
       transparent 35%
     ),
     #080811;
@@ -171,9 +159,13 @@ header {
 
   padding: 0 22px;
 
+  background: rgba(8,8,17,.95);
+
   border-bottom: 1px solid rgba(255,255,255,.08);
 
-  background: rgba(8,8,17,.9);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .logo {
@@ -218,11 +210,11 @@ header {
 }
 
 /* =========================
-   MAIN CONTENT
+   MAIN
 ========================= */
 
 main {
-  padding: 28px 22px 100px;
+  padding: 30px 22px 110px;
   max-width: 1200px;
   margin: auto;
 }
@@ -242,12 +234,11 @@ main {
 }
 
 /* =========================
-   SECTION CARDS
+   SECTIONS
 ========================= */
 
 .sectionGrid {
   display: grid;
-
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
@@ -264,8 +255,8 @@ main {
   background:
     linear-gradient(
       145deg,
-      rgba(25,25,50,.95),
-      rgba(15,15,30,.95)
+      rgba(25,25,50,.96),
+      rgba(15,15,30,.96)
     );
 
   padding: 20px;
@@ -276,28 +267,27 @@ main {
 
   cursor: pointer;
 
+  user-select: none;
+
   transition:
-    transform .18s ease,
-    border-color .18s ease,
-    background .18s ease;
+    transform .15s ease,
+    border-color .15s ease,
+    background .15s ease;
 }
 
 .section:hover {
   transform: translateY(-3px);
 
   border-color:
-    rgba(99,133,255,.5);
+    rgba(57,133,255,.55);
+}
 
-  background:
-    linear-gradient(
-      145deg,
-      rgba(31,31,62,.98),
-      rgba(17,17,34,.98)
-    );
+.section:active {
+  transform: scale(.97);
 }
 
 .sectionIcon {
-  font-size: 28px;
+  font-size: 29px;
 }
 
 .sectionName {
@@ -312,29 +302,55 @@ main {
 }
 
 /* =========================
-   EMPTY CONTENT AREA
+   TEMPORARY PAGE
 ========================= */
 
-.emptyArea {
-  margin-top: 20px;
+#page {
+  display: none;
+}
 
-  min-height: 170px;
+#page.show {
+  display: block;
+}
 
-  border: 1px dashed rgba(255,255,255,.12);
+.backButton {
+  border: none;
+  background: #191932;
+  color: white;
+
+  padding: 11px 17px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  margin-bottom: 25px;
+}
+
+.backButton:active {
+  transform: scale(.96);
+}
+
+.pageBox {
+  border: 1px solid rgba(255,255,255,.08);
+
+  background: #121225;
 
   border-radius: 20px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 30px;
 
   text-align: center;
-
-  color: #777786;
 }
 
-.emptyArea span {
-  max-width: 280px;
+.pageBox h2 {
+  margin-bottom: 10px;
+}
+
+.pageBox p {
+  color: #9999a8;
 }
 
 /* =========================
@@ -343,6 +359,7 @@ main {
 
 .bottomNav {
   position: fixed;
+
   bottom: 0;
   left: 0;
   right: 0;
@@ -353,16 +370,18 @@ main {
   justify-content: space-around;
   align-items: center;
 
-  background: rgba(10,10,20,.96);
+  background: rgba(10,10,20,.97);
 
   border-top: 1px solid rgba(255,255,255,.08);
 
   backdrop-filter: blur(12px);
+
+  z-index: 50;
 }
 
 .navButton {
-  background: none;
   border: none;
+  background: transparent;
 
   color: #8d8d9b;
 
@@ -385,14 +404,22 @@ main {
   color: #3985ff;
 }
 
+.navButton:active {
+  transform: scale(.9);
+}
+
 /* =========================
    MOBILE
 ========================= */
 
 @media (max-width: 600px) {
 
+  header {
+    padding: 0 16px;
+  }
+
   main {
-    padding: 22px 16px 100px;
+    padding: 24px 16px 105px;
   }
 
   .welcome h1 {
@@ -405,10 +432,6 @@ main {
 
   .section {
     min-height: 115px;
-  }
-
-  header {
-    padding: 0 16px;
   }
 }
 </style>
@@ -425,14 +448,14 @@ main {
   <div id="blob"></div>
 
   <div id="powered">
-    Powered by OnLine Studios
+    Powered by OnVerse Studios
   </div>
 
 </div>
 
 
 <!-- =========================
-     PLAYBLOCKS APP
+     PLAYBLOCKS
 ========================= -->
 
 <div id="app">
@@ -452,120 +475,156 @@ main {
 
   <main>
 
-    <div class="welcome">
+    <!-- HOME -->
 
-      <h1>Welcome to PlayBlocks</h1>
+    <div id="home">
 
-      <p>
-        Build, explore, and play your way.
-      </p>
+      <div class="welcome">
+
+        <h1>Welcome to PlayBlocks</h1>
+
+        <p>
+          Build, explore, and play your way.
+        </p>
+
+      </div>
+
+
+      <div class="sectionGrid">
+
+        <div class="section"
+             onclick="openPage('Games')">
+
+          <div class="sectionIcon">🎮</div>
+
+          <div>
+            <div class="sectionName">
+              Games
+            </div>
+
+            <div class="sectionDescription">
+              Play your favorite experiences
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('Discover')">
+
+          <div class="sectionIcon">🌎</div>
+
+          <div>
+            <div class="sectionName">
+              Discover
+            </div>
+
+            <div class="sectionDescription">
+              Find something new
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('Friends')">
+
+          <div class="sectionIcon">👥</div>
+
+          <div>
+            <div class="sectionName">
+              Friends
+            </div>
+
+            <div class="sectionDescription">
+              See what your friends are doing
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('Profile')">
+
+          <div class="sectionIcon">👤</div>
+
+          <div>
+            <div class="sectionName">
+              Profile
+            </div>
+
+            <div class="sectionDescription">
+              Your PlayBlocks profile
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('Settings')">
+
+          <div class="sectionIcon">⚙️</div>
+
+          <div>
+            <div class="sectionName">
+              Settings
+            </div>
+
+            <div class="sectionDescription">
+              Customize PlayBlocks
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('About')">
+
+          <div class="sectionIcon">🧱</div>
+
+          <div>
+            <div class="sectionName">
+              About PlayBlocks
+            </div>
+
+            <div class="sectionDescription">
+              Learn about PlayBlocks
+            </div>
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
 
 
-    <!-- MAIN SECTIONS -->
+    <!-- TEMPORARY PAGES -->
 
-    <div class="sectionGrid">
+    <div id="page">
 
-      <div class="section">
-        <div class="sectionIcon">🏠</div>
+      <button
+        class="backButton"
+        onclick="goHome()">
+        ← Back
+      </button>
 
-        <div>
-          <div class="sectionName">
-            Home
-          </div>
+      <div class="pageBox">
 
-          <div class="sectionDescription">
-            Your PlayBlocks home
-          </div>
-        </div>
+        <h2 id="pageTitle">
+          Coming Soon
+        </h2>
+
+        <p>
+          This section is being built right now.
+        </p>
+
       </div>
-
-
-      <div class="section">
-        <div class="sectionIcon">🎮</div>
-
-        <div>
-          <div class="sectionName">
-            Games
-          </div>
-
-          <div class="sectionDescription">
-            Play your favorite experiences
-          </div>
-        </div>
-      </div>
-
-
-      <div class="section">
-        <div class="sectionIcon">🌎</div>
-
-        <div>
-          <div class="sectionName">
-            Discover
-          </div>
-
-          <div class="sectionDescription">
-            Find something new
-          </div>
-        </div>
-      </div>
-
-
-      <div class="section">
-        <div class="sectionIcon">👥</div>
-
-        <div>
-          <div class="sectionName">
-            Friends
-          </div>
-
-          <div class="sectionDescription">
-            See what your friends are doing
-          </div>
-        </div>
-      </div>
-
-
-      <div class="section">
-        <div class="sectionIcon">👤</div>
-
-        <div>
-          <div class="sectionName">
-            Profile
-          </div>
-
-          <div class="sectionDescription">
-            Your PlayBlocks profile
-          </div>
-        </div>
-      </div>
-
-
-      <div class="section">
-        <div class="sectionIcon">⚙️</div>
-
-        <div>
-          <div class="sectionName">
-            Settings
-          </div>
-
-          <div class="sectionDescription">
-            Customize PlayBlocks
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-
-    <!-- EMPTY FOR NOW -->
-
-    <div class="emptyArea">
-
-      <span>
-        PlayBlocks content will appear here later.
-      </span>
 
     </div>
 
@@ -576,29 +635,53 @@ main {
 
   <nav class="bottomNav">
 
-    <button class="navButton active">
+    <button
+      class="navButton active"
+      onclick="goHome()">
+
       <span>🏠</span>
       Home
+
     </button>
 
-    <button class="navButton">
+
+    <button
+      class="navButton"
+      onclick="openPage('Games')">
+
       <span>🎮</span>
       Games
+
     </button>
 
-    <button class="navButton">
+
+    <button
+      class="navButton"
+      onclick="openPage('Discover')">
+
       <span>🌎</span>
       Discover
+
     </button>
 
-    <button class="navButton">
+
+    <button
+      class="navButton"
+      onclick="openPage('Friends')">
+
       <span>👥</span>
       Friends
+
     </button>
 
-    <button class="navButton">
+
+    <button
+      class="navButton"
+      onclick="openPage('Profile')">
+
       <span>👤</span>
       Profile
+
     </button>
 
   </nav>
@@ -609,17 +692,22 @@ main {
 <script>
 
 /* =========================
-   STARTUP SEQUENCE
+   STARTUP
 ========================= */
 
-const startup = document.getElementById("startup");
-const blob = document.getElementById("blob");
-const powered = document.getElementById("powered");
-const app = document.getElementById("app");
+const startup =
+  document.getElementById("startup");
+
+const blob =
+  document.getElementById("blob");
+
+const app =
+  document.getElementById("app");
 
 
 /*
-   Let the blob spin for a while.
+   After the blob has twirled,
+   fade it away.
 */
 
 setTimeout(() => {
@@ -629,14 +717,13 @@ setTimeout(() => {
 
   blob.style.opacity = "0";
 
-  blob.style.transform =
-    "scale(.5)";
+  blob.style.transform = "scale(.5)";
 
 }, 3500);
 
 
 /*
-   Show the PlayBlocks home screen.
+   Open PlayBlocks home.
 */
 
 setTimeout(() => {
@@ -645,21 +732,51 @@ setTimeout(() => {
 
   app.classList.add("show");
 
-}, 5400);
+}, 5200);
 
 
 /*
-   Completely remove startup
-   after the transition.
+   Remove startup completely.
 */
 
 setTimeout(() => {
 
   startup.style.display = "none";
 
-}, 6300);
+}, 6200);
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function openPage(name) {
+
+  document.getElementById("home")
+    .style.display = "none";
+
+  document.getElementById("page")
+    .classList.add("show");
+
+  document.getElementById("pageTitle")
+    .textContent = name;
+
+  window.scrollTo(0, 0);
+}
+
+
+function goHome() {
+
+  document.getElementById("page")
+    .classList.remove("show");
+
+  document.getElementById("home")
+    .style.display = "block";
+
+  window.scrollTo(0, 0);
+}
 
 </script>
 
 </body>
-</html>
+        </html>
