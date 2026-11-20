@@ -13,18 +13,23 @@
   padding: 0;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #000;
 }
 
 body {
+  background: #080811;
+  color: white;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* STARTUP SCREEN */
+/* =========================
+   STARTUP
+========================= */
+
 #startup {
   position: fixed;
   inset: 0;
@@ -32,67 +37,72 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 1000;
+  transition: opacity 0.8s ease;
 }
 
-/* PLAYBLOCKS BLOB */
-#blob {
-  width: 150px;
-  height: 150px;
+#startup.hide {
+  opacity: 0;
+  pointer-events: none;
+}
 
-  background: linear-gradient(
-    135deg,
-    #3985ff,
-    #7c3aed,
-    #984dff
-  );
+/* PlayBlocks blob */
+
+#blob {
+  width: 145px;
+  height: 145px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #3985ff 0%,
+      #6b5cff 45%,
+      #984dff 100%
+    );
 
   border-radius:
-    42% 58% 63% 37% /
-    55% 43% 57% 45%;
+    45% 55% 60% 40% /
+    55% 42% 58% 45%;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  animation:
-    blobSpin 1.4s ease-in-out infinite,
-    blobPulse 1.4s ease-in-out infinite;
-
   box-shadow:
-    0 0 35px rgba(57, 133, 255, 0.35),
-    0 0 70px rgba(152, 77, 255, 0.2);
+    0 0 35px rgba(57,133,255,.35),
+    0 0 75px rgba(152,77,255,.25);
+
+  animation: twirl 1.4s ease-in-out infinite;
 }
 
-/* SIMPLE PLAY SYMBOL */
 #blob::after {
   content: "";
+
   width: 0;
   height: 0;
 
-  border-top: 28px solid transparent;
-  border-bottom: 28px solid transparent;
-  border-left: 42px solid white;
+  border-top: 27px solid transparent;
+  border-bottom: 27px solid transparent;
+  border-left: 43px solid white;
 
   margin-left: 8px;
 }
 
-/* LOOPING TWIRL */
-@keyframes blobSpin {
+@keyframes twirl {
   0% {
     transform: rotate(0deg) scale(1);
   }
 
   25% {
-    transform: rotate(90deg) scale(1.06);
+    transform: rotate(90deg) scale(1.07);
   }
 
   50% {
-    transform: rotate(180deg) scale(0.94);
+    transform: rotate(180deg) scale(.94);
   }
 
   75% {
-    transform: rotate(270deg) scale(1.06);
+    transform: rotate(270deg) scale(1.07);
   }
 
   100% {
@@ -100,73 +110,315 @@ body {
   }
 }
 
-@keyframes blobPulse {
-  0%, 100% {
-    border-radius:
-      42% 58% 63% 37% /
-      55% 43% 57% 45%;
-  }
+/* Powered by */
 
-  50% {
-    border-radius:
-      58% 42% 38% 62% /
-      44% 59% 41% 56%;
-  }
-}
-
-/* ONLiNE STUDIOS TEXT */
 #powered {
   position: absolute;
 
-  color: white;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-
   opacity: 0;
-  transform: scale(0.7);
+  transform: scale(.7);
 
-  animation: showText 1.2s ease forwards;
+  font-size: 21px;
+  font-weight: 600;
 
-  animation-delay: 4.2s;
+  letter-spacing: .4px;
+
+  animation: poweredIn 1s ease forwards;
+  animation-delay: 3.6s;
 }
 
-@keyframes showText {
-  0% {
+@keyframes poweredIn {
+  from {
     opacity: 0;
-    transform: scale(0.7);
+    transform: scale(.7);
   }
 
-  60% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
-
-  100% {
+  to {
     opacity: 1;
     transform: scale(1);
   }
 }
 
-/* HIDE BLOB BEFORE TEXT */
-#blob {
-  animation-delay: 0s;
+/* =========================
+   MAIN APP
+========================= */
+
+#app {
+  display: none;
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(98,65,255,.12),
+      transparent 35%
+    ),
+    #080811;
 }
 
-#startup.finished {
-  animation: fadeToBlack 0.8s ease forwards;
-  animation-delay: 5.8s;
+#app.show {
+  display: block;
 }
 
-@keyframes fadeToBlack {
-  to {
-    opacity: 0;
+/* =========================
+   HEADER
+========================= */
+
+header {
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 22px;
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+
+  background: rgba(8,8,17,.9);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.logoBlob {
+  width: 38px;
+  height: 38px;
+
+  background: linear-gradient(
+    135deg,
+    #3985ff,
+    #984dff
+  );
+
+  border-radius:
+    45% 55% 60% 40% /
+    55% 42% 58% 45%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoBlob::after {
+  content: "";
+
+  width: 0;
+  height: 0;
+
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 13px solid white;
+
+  margin-left: 2px;
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+main {
+  padding: 28px 22px 100px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.welcome {
+  margin-bottom: 26px;
+}
+
+.welcome h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.welcome p {
+  color: #a7a7b5;
+  font-size: 15px;
+}
+
+/* =========================
+   SECTION CARDS
+========================= */
+
+.sectionGrid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.section {
+  min-height: 135px;
+
+  border: 1px solid rgba(255,255,255,.08);
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(25,25,50,.95),
+      rgba(15,15,30,.95)
+    );
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  cursor: pointer;
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease;
+}
+
+.section:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(99,133,255,.5);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(31,31,62,.98),
+      rgba(17,17,34,.98)
+    );
+}
+
+.sectionIcon {
+  font-size: 28px;
+}
+
+.sectionName {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.sectionDescription {
+  color: #90909f;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* =========================
+   EMPTY CONTENT AREA
+========================= */
+
+.emptyArea {
+  margin-top: 20px;
+
+  min-height: 170px;
+
+  border: 1px dashed rgba(255,255,255,.12);
+
+  border-radius: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  color: #777786;
+}
+
+.emptyArea span {
+  max-width: 280px;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottomNav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  height: 72px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: rgba(10,10,20,.96);
+
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  backdrop-filter: blur(12px);
+}
+
+.navButton {
+  background: none;
+  border: none;
+
+  color: #8d8d9b;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 4px;
+
+  font-size: 11px;
+
+  cursor: pointer;
+}
+
+.navButton span {
+  font-size: 21px;
+}
+
+.navButton.active {
+  color: #3985ff;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+  main {
+    padding: 22px 16px 100px;
+  }
+
+  .welcome h1 {
+    font-size: 28px;
+  }
+
+  .sectionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    min-height: 115px;
+  }
+
+  header {
+    padding: 0 16px;
   }
 }
 </style>
 </head>
 
 <body>
+
+<!-- =========================
+     STARTUP
+========================= -->
 
 <div id="startup">
 
@@ -178,36 +430,235 @@ body {
 
 </div>
 
+
+<!-- =========================
+     PLAYBLOCKS APP
+========================= -->
+
+<div id="app">
+
+  <header>
+
+    <div class="logo">
+
+      <div class="logoBlob"></div>
+
+      <span>PlayBlocks</span>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <div class="welcome">
+
+      <h1>Welcome to PlayBlocks</h1>
+
+      <p>
+        Build, explore, and play your way.
+      </p>
+
+    </div>
+
+
+    <!-- MAIN SECTIONS -->
+
+    <div class="sectionGrid">
+
+      <div class="section">
+        <div class="sectionIcon">🏠</div>
+
+        <div>
+          <div class="sectionName">
+            Home
+          </div>
+
+          <div class="sectionDescription">
+            Your PlayBlocks home
+          </div>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <div class="sectionIcon">🎮</div>
+
+        <div>
+          <div class="sectionName">
+            Games
+          </div>
+
+          <div class="sectionDescription">
+            Play your favorite experiences
+          </div>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <div class="sectionIcon">🌎</div>
+
+        <div>
+          <div class="sectionName">
+            Discover
+          </div>
+
+          <div class="sectionDescription">
+            Find something new
+          </div>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <div class="sectionIcon">👥</div>
+
+        <div>
+          <div class="sectionName">
+            Friends
+          </div>
+
+          <div class="sectionDescription">
+            See what your friends are doing
+          </div>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <div class="sectionIcon">👤</div>
+
+        <div>
+          <div class="sectionName">
+            Profile
+          </div>
+
+          <div class="sectionDescription">
+            Your PlayBlocks profile
+          </div>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <div class="sectionIcon">⚙️</div>
+
+        <div>
+          <div class="sectionName">
+            Settings
+          </div>
+
+          <div class="sectionDescription">
+            Customize PlayBlocks
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- EMPTY FOR NOW -->
+
+    <div class="emptyArea">
+
+      <span>
+        PlayBlocks content will appear here later.
+      </span>
+
+    </div>
+
+  </main>
+
+
+  <!-- BOTTOM NAV -->
+
+  <nav class="bottomNav">
+
+    <button class="navButton active">
+      <span>🏠</span>
+      Home
+    </button>
+
+    <button class="navButton">
+      <span>🎮</span>
+      Games
+    </button>
+
+    <button class="navButton">
+      <span>🌎</span>
+      Discover
+    </button>
+
+    <button class="navButton">
+      <span>👥</span>
+      Friends
+    </button>
+
+    <button class="navButton">
+      <span>👤</span>
+      Profile
+    </button>
+
+  </nav>
+
+</div>
+
+
 <script>
+
+/* =========================
+   STARTUP SEQUENCE
+========================= */
+
 const startup = document.getElementById("startup");
 const blob = document.getElementById("blob");
+const powered = document.getElementById("powered");
+const app = document.getElementById("app");
+
 
 /*
-  After the PlayBlocks blob finishes,
-  switch to the OnLine Studios text.
+   Let the blob spin for a while.
 */
+
 setTimeout(() => {
-  blob.style.animation = "none";
+
+  blob.style.transition =
+    "opacity .6s ease, transform .6s ease";
+
   blob.style.opacity = "0";
-  blob.style.transform = "scale(0.5)";
-  blob.style.transition = "opacity 0.5s ease, transform 0.5s ease";
-}, 3800);
+
+  blob.style.transform =
+    "scale(.5)";
+
+}, 3500);
+
 
 /*
-  Finish startup and leave the player
-  on a completely black screen.
+   Show the PlayBlocks home screen.
 */
+
 setTimeout(() => {
-  startup.classList.add("finished");
-}, 5800);
+
+  startup.classList.add("hide");
+
+  app.classList.add("show");
+
+}, 5400);
+
 
 /*
-  Keep the black screen after the animation.
+   Completely remove startup
+   after the transition.
 */
+
 setTimeout(() => {
+
   startup.style.display = "none";
-  document.body.style.background = "#000";
-}, 6700);
+
+}, 6300);
+
 </script>
 
 </body>
