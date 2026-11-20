@@ -138,4 +138,77 @@ body {
   }
 
   60% {
-    opacity:
+    opacity: 1;
+    transform: scale(1.08);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* HIDE BLOB BEFORE TEXT */
+#blob {
+  animation-delay: 0s;
+}
+
+#startup.finished {
+  animation: fadeToBlack 0.8s ease forwards;
+  animation-delay: 5.8s;
+}
+
+@keyframes fadeToBlack {
+  to {
+    opacity: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="startup">
+
+  <div id="blob"></div>
+
+  <div id="powered">
+    Powered by OnLine Studios
+  </div>
+
+</div>
+
+<script>
+const startup = document.getElementById("startup");
+const blob = document.getElementById("blob");
+
+/*
+  After the PlayBlocks blob finishes,
+  switch to the OnLine Studios text.
+*/
+setTimeout(() => {
+  blob.style.animation = "none";
+  blob.style.opacity = "0";
+  blob.style.transform = "scale(0.5)";
+  blob.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+}, 3800);
+
+/*
+  Finish startup and leave the player
+  on a completely black screen.
+*/
+setTimeout(() => {
+  startup.classList.add("finished");
+}, 5800);
+
+/*
+  Keep the black screen after the animation.
+*/
+setTimeout(() => {
+  startup.style.display = "none";
+  document.body.style.background = "#000";
+}, 6700);
+</script>
+
+</body>
+</html>
