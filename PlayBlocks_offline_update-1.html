@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlayBlocks</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  background: #080811;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   STARTUP
+========================= */
+
+#startup {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.8s ease;
+}
+
+#startup.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#blob {
+  width: 145px;
+  height: 145px;
+
+  background: linear-gradient(
+    135deg,
+    #3985ff,
+    #6b5cff,
+    #984dff
+  );
+
+  border-radius:
+    45% 55% 60% 40% /
+    55% 42% 58% 45%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 0 35px rgba(57,133,255,.4),
+    0 0 75px rgba(152,77,255,.25);
+
+  animation: twirl 1.4s ease-in-out infinite;
+}
+
+#blob::after {
+  content: "";
+
+  width: 0;
+  height: 0;
+
+  border-top: 27px solid transparent;
+  border-bottom: 27px solid transparent;
+  border-left: 43px solid white;
+
+  margin-left: 8px;
+}
+
+@keyframes twirl {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  25% {
+    transform: rotate(90deg) scale(1.07);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(.94);
+  }
+
+  75% {
+    transform: rotate(270deg) scale(1.07);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+#powered {
+  position: absolute;
+
+  font-size: 21px;
+  font-weight: 600;
+
+  opacity: 0;
+  transform: scale(.7);
+
+  animation: poweredIn 1s ease forwards;
+  animation-delay: 3.5s;
+}
+
+@keyframes poweredIn {
+  from {
+    opacity: 0;
+    transform: scale(.7);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =========================
+   APP
+========================= */
+
+#app {
+  display: none;
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(98,65,255,.13),
+      transparent 35%
+    ),
+    #080811;
+}
+
+#app.show {
+  display: block;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+  height: 70px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 22px;
+
+  background: rgba(8,8,17,.95);
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.logoBlob {
+  width: 38px;
+  height: 38px;
+
+  background: linear-gradient(
+    135deg,
+    #3985ff,
+    #984dff
+  );
+
+  border-radius:
+    45% 55% 60% 40% /
+    55% 42% 58% 45%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoBlob::after {
+  content: "";
+
+  width: 0;
+  height: 0;
+
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 13px solid white;
+
+  margin-left: 2px;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main {
+  padding: 30px 22px 110px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.welcome {
+  margin-bottom: 26px;
+}
+
+.welcome h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.welcome p {
+  color: #a7a7b5;
+  font-size: 15px;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.sectionGrid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+.section {
+  min-height: 135px;
+
+  border: 1px solid rgba(255,255,255,.08);
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(25,25,50,.96),
+      rgba(15,15,30,.96)
+    );
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  transition:
+    transform .15s ease,
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.section:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(57,133,255,.55);
+}
+
+.section:active {
+  transform: scale(.97);
+}
+
+.sectionIcon {
+  font-size: 29px;
+}
+
+.sectionName {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.sectionDescription {
+  color: #90909f;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* =========================
+   TEMPORARY PAGE
+========================= */
+
+#page {
+  display: none;
+}
+
+#page.show {
+  display: block;
+}
+
+.backButton {
+  border: none;
+  background: #191932;
+  color: white;
+
+  padding: 11px 17px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  margin-bottom: 25px;
+}
+
+.backButton:active {
+  transform: scale(.96);
+}
+
+.pageBox {
+  border: 1px solid rgba(255,255,255,.08);
+
+  background: #121225;
+
+  border-radius: 20px;
+
+  padding: 30px;
+
+  text-align: center;
+}
+
+.pageBox h2 {
+  margin-bottom: 10px;
+}
+
+.pageBox p {
+  color: #9999a8;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottomNav {
+  position: fixed;
+
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  height: 72px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  background: rgba(10,10,20,.97);
+
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  backdrop-filter: blur(12px);
+
+  z-index: 50;
+}
+
+.navButton {
+  border: none;
+  background: transparent;
+
+  color: #8d8d9b;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 4px;
+
+  font-size: 11px;
+
+  cursor: pointer;
+}
+
+.navButton span {
+  font-size: 21px;
+}
+
+.navButton.active {
+  color: #3985ff;
+}
+
+.navButton:active {
+  transform: scale(.9);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+  header {
+    padding: 0 16px;
+  }
+
+  main {
+    padding: 24px 16px 105px;
+  }
+
+  .welcome h1 {
+    font-size: 28px;
+  }
+
+  .sectionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    min-height: 115px;
+  }
+}
+
+/* =========================
+   OFFLINE SCREEN
+========================= */
+#offlineScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(98,65,255,.18), transparent 38%),
+    #080811;
+}
+
+#offlineScreen.show {
+  display: flex;
+}
+
+.offlineBox {
+  width: min(460px, 100%);
+  text-align: center;
+  padding: 32px 24px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(25,25,50,.98), rgba(15,15,30,.98));
+  box-shadow: 0 20px 70px rgba(0,0,0,.35);
+}
+
+.offlineIcon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 22px;
+  background: linear-gradient(135deg, #3985ff, #984dff);
+  border-radius: 45% 55% 60% 40% / 55% 42% 58% 45%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 35px rgba(57,133,255,.25);
+}
+
+.offlineIcon::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 22px solid transparent;
+  border-bottom: 22px solid transparent;
+  border-left: 34px solid white;
+  margin-left: 7px;
+}
+
+.offlineBox h1 {
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.offlineBox p {
+  color: #a7a7b5;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.offlineButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.offlineButton {
+  border: none;
+  border-radius: 13px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: #3985ff;
+  cursor: pointer;
+}
+
+.offlineButton.secondary {
+  background: #191932;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.offlineButton:active {
+  transform: scale(.96);
+}
+
+/* =========================
+   HOPPING RABBITS
+========================= */
+#rabbitGame {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  display: none;
+  background: #080811;
+}
+
+#rabbitGame.show {
+  display: block;
+}
+
+.rabbitTop {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.rabbitTitle {
+  font-weight: 800;
+}
+
+.rabbitScore {
+  color: #3985ff;
+  font-weight: 800;
+}
+
+.rabbitCanvasWrap {
+  height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+
+#rabbitCanvas {
+  width: min(900px, 100%);
+  height: min(520px, 72vh);
+  max-height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(#10152b, #161626);
+  border: 1px solid rgba(255,255,255,.08);
+  touch-action: manipulation;
+}
+
+.rabbitBack {
+  border: none;
+  background: #191932;
+  color: white;
+  border-radius: 10px;
+  padding: 9px 13px;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     STARTUP
+========================= -->
+
+<div id="startup">
+
+  <div id="blob"></div>
+
+  <div id="powered">
+    Powered by OnThePlus Studios
+  </div>
+
+</div>
+
+
+<!-- =========================
+     PLAYBLOCKS
+========================= -->
+
+
+<!-- =========================
+     OFFLINE SCREEN
+========================= -->
+<div id="offlineScreen" aria-hidden="true">
+  <div class="offlineBox">
+    <div class="offlineIcon" aria-hidden="true"></div>
+    <h1>We couldn't load this thing for you.</h1>
+    <p>Try again or refresh.</p>
+    <div class="offlineButtons">
+      <button class="offlineButton" onclick="location.reload()">↻ Refresh</button>
+      <button class="offlineButton secondary" onclick="startRabbitGame()">🐇 Play Quick Game</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================
+     HOPPING RABBITS
+========================= -->
+<div id="rabbitGame" aria-hidden="true">
+  <div class="rabbitTop">
+    <button class="rabbitBack" onclick="closeRabbitGame()">← Back</button>
+    <div class="rabbitTitle">🐇 Hopping Rabbits</div>
+    <div class="rabbitScore">Score: <span id="rabbitScore">0</span></div>
+  </div>
+  <div class="rabbitCanvasWrap">
+    <canvas id="rabbitCanvas" width="900" height="520"></canvas>
+  </div>
+</div>
+
+<div id="app">
+
+  <header>
+
+    <div class="logo">
+
+      <div class="logoBlob"></div>
+
+      <span>PlayBlocks</span>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+    <!-- HOME -->
+
+    <div id="home">
+
+      <div class="welcome">
+
+        <h1>Welcome to PlayBlocks</h1>
+
+        <p>
+          Build, explore, and play your way.
+        </p>
+
+      </div>
+
+
+      <div class="sectionGrid">
+
+        <div class="section"
+             onclick="openPage('Games')">
+
+          <div class="sectionIcon">🎮</div>
+
+          <div>
+            <div class="sectionName">
+              Games
+            </div>
+
+            <div class="sectionDescription">
+              Play your favorite experiences
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('Discover')">
+
+          <div class="sectionIcon">🌎</div>
+
+          <div>
+            <div class="sectionName">
+              Discover
+            </div>
+
+            <div class="sectionDescription">
+              Find something new
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('Friends')">
+
+          <div class="sectionIcon">👥</div>
+
+          <div>
+            <div class="sectionName">
+              Friends
+            </div>
+
+            <div class="sectionDescription">
+              See what your friends are doing
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('Profile')">
+
+          <div class="sectionIcon">👤</div>
+
+          <div>
+            <div class="sectionName">
+              Profile
+            </div>
+
+            <div class="sectionDescription">
+              Your PlayBlocks profile
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('Settings')">
+
+          <div class="sectionIcon">⚙️</div>
+
+          <div>
+            <div class="sectionName">
+              Settings
+            </div>
+
+            <div class="sectionDescription">
+              Customize PlayBlocks
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="section"
+             onclick="openPage('About')">
+
+          <div class="sectionIcon">🧱</div>
+
+          <div>
+            <div class="sectionName">
+              About PlayBlocks
+            </div>
+
+            <div class="sectionDescription">
+              Learn about PlayBlocks
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- TEMPORARY PAGES -->
+
+    <div id="page">
+
+      <button
+        class="backButton"
+        onclick="goHome()">
+        ← Back
+      </button>
+
+      <div class="pageBox">
+
+        <h2 id="pageTitle">
+          Coming Soon
+        </h2>
+
+        <p>
+          This section is being built right now.
+        </p>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <!-- BOTTOM NAV -->
+
+  <nav class="bottomNav">
+
+    <button
+      class="navButton active"
+      onclick="goHome()">
+
+      <span>🏠</span>
+      Home
+
+    </button>
+
+
+    <button
+      class="navButton"
+      onclick="openPage('Games')">
+
+      <span>🎮</span>
+      Games
+
+    </button>
+
+
+    <button
+      class="navButton"
+      onclick="openPage('Discover')">
+
+      <span>🌎</span>
+      Discover
+
+    </button>
+
+
+    <button
+      class="navButton"
+      onclick="openPage('Friends')">
+
+      <span>👥</span>
+      Friends
+
+    </button>
+
+
+    <button
+      class="navButton"
+      onclick="openPage('Profile')">
+
+      <span>👤</span>
+      Profile
+
+    </button>
+
+  </nav>
+
+</div>
+
+
+<script>
+
+/* =========================
+   STARTUP
+========================= */
+
+const startup =
+  document.getElementById("startup");
+
+const blob =
+  document.getElementById("blob");
+
+const app =
+  document.getElementById("app");
+
+
+/*
+   After the blob has twirled,
+   fade it away.
+*/
+
+setTimeout(() => {
+
+  blob.style.transition =
+    "opacity .6s ease, transform .6s ease";
+
+  blob.style.opacity = "0";
+
+  blob.style.transform = "scale(.5)";
+
+}, 3500);
+
+
+/*
+   Open PlayBlocks home.
+*/
+
+setTimeout(() => {
+  if (navigator.onLine) {
+    startup.classList.add("hide");
+    app.classList.add("show");
+  } else {
+    showOfflineScreen();
+  }
+}, 5200);
+
+
+/*
+   Remove startup completely.
+*/
+
+setTimeout(() => {
+
+  startup.style.display = "none";
+
+}, 6200);
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function openPage(name) {
+
+  document.getElementById("home")
+    .style.display = "none";
+
+  document.getElementById("page")
+    .classList.add("show");
+
+  document.getElementById("pageTitle")
+    .textContent = name;
+
+  window.scrollTo(0, 0);
+}
+
+
+function goHome() {
+
+  document.getElementById("page")
+    .classList.remove("show");
+
+  document.getElementById("home")
+    .style.display = "block";
+
+  window.scrollTo(0, 0);
+}
+
+
+/* =========================
+   OFFLINE MODE
+========================= */
+
+const offlineScreen = document.getElementById("offlineScreen");
+const rabbitGame = document.getElementById("rabbitGame");
+
+function showOfflineScreen() {
+  offlineScreen.classList.add("show");
+  offlineScreen.setAttribute("aria-hidden", "false");
+  app.classList.remove("show");
+  startup.style.display = "none";
+}
+
+function hideOfflineScreen() {
+  offlineScreen.classList.remove("show");
+  offlineScreen.setAttribute("aria-hidden", "true");
+}
+
+function checkConnection() {
+  if (!navigator.onLine) {
+    showOfflineScreen();
+  } else if (offlineScreen.classList.contains("show")) {
+    hideOfflineScreen();
+    location.reload();
+  }
+}
+
+window.addEventListener("offline", showOfflineScreen);
+window.addEventListener("online", checkConnection);
+
+/* =========================
+   HOPPING RABBITS
+========================= */
+
+const rabbitCanvas = document.getElementById("rabbitCanvas");
+const rabbitCtx = rabbitCanvas.getContext("2d");
+const rabbitScoreEl = document.getElementById("rabbitScore");
+
+let rabbitAnimation = null;
+let rabbitRunning = false;
+let rabbitScore = 0;
+let rabbitSpeed = 5;
+let rabbitPlayer;
+let rabbitHoles = [];
+let rabbitLastTime = 0;
+
+function startRabbitGame() {
+  offlineScreen.classList.remove("show");
+  rabbitGame.classList.add("show");
+  rabbitGame.setAttribute("aria-hidden", "false");
+  resetRabbitGame();
+}
+
+function closeRabbitGame() {
+  rabbitRunning = false;
+  if (rabbitAnimation) cancelAnimationFrame(rabbitAnimation);
+  rabbitGame.classList.remove("show");
+  rabbitGame.setAttribute("aria-hidden", "true");
+  if (!navigator.onLine) offlineScreen.classList.add("show");
+}
+
+function resetRabbitGame() {
+  if (rabbitAnimation) cancelAnimationFrame(rabbitAnimation);
+
+  rabbitScore = 0;
+  rabbitSpeed = 5;
+  rabbitScoreEl.textContent = "0";
+
+  rabbitPlayer = {
+    x: 120,
+    y: 390,
+    w: 42,
+    h: 42,
+    vy: 0,
+    jumping: false
+  };
+
+  rabbitHoles = [
+    { x: 720, w: 70 },
+    { x: 1040, w: 80 }
+  ];
+
+  rabbitRunning = true;
+  rabbitLastTime = performance.now();
+  rabbitAnimation = requestAnimationFrame(rabbitLoop);
+}
+
+function rabbitJump() {
+  if (!rabbitRunning) {
+    resetRabbitGame();
+    return;
+  }
+
+  if (!rabbitPlayer.jumping) {
+    rabbitPlayer.vy = -12;
+    rabbitPlayer.jumping = true;
+  }
+}
+
+rabbitCanvas.addEventListener("pointerdown", rabbitJump);
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Space" || e.code === "ArrowUp") {
+    e.preventDefault();
+    rabbitJump();
+  }
+});
+
+function rabbitLoop(time) {
+  if (!rabbitRunning) return;
+
+  const dt = Math.min((time - rabbitLastTime) / 16.67, 2);
+  rabbitLastTime = time;
+
+  updateRabbit(dt);
+  drawRabbit();
+
+  rabbitAnimation = requestAnimationFrame(rabbitLoop);
+}
+
+function updateRabbit(dt) {
+  rabbitPlayer.vy += 0.65 * dt;
+  rabbitPlayer.y += rabbitPlayer.vy * dt;
+
+  const groundY = 390;
+
+  if (rabbitPlayer.y >= groundY) {
+    rabbitPlayer.y = groundY;
+    rabbitPlayer.vy = 0;
+    rabbitPlayer.jumping = false;
+  }
+
+  rabbitSpeed += 0.0007 * dt;
+
+  rabbitHoles.forEach(hole => {
+    hole.x -= rabbitSpeed * dt;
+  });
+
+  if (rabbitHoles.length && rabbitHoles[0].x + rabbitHoles[0].w < 0) {
+    rabbitHoles.shift();
+    rabbitScore++;
+    rabbitScoreEl.textContent = rabbitScore;
+
+    const last = rabbitHoles[rabbitHoles.length - 1];
+    rabbitHoles.push({
+      x: Math.max(900, last.x + 300 + Math.random() * 180),
+      w: 55 + Math.random() * 40
+    });
+  }
+
+  for (const hole of rabbitHoles) {
+    const rabbitRight = rabbitPlayer.x + rabbitPlayer.w;
+    const rabbitBottom = rabbitPlayer.y + rabbitPlayer.h;
+
+    const overlapsX =
+      rabbitRight > hole.x &&
+      rabbitPlayer.x < hole.x + hole.w;
+
+    if (overlapsX && rabbitBottom >= 432 && !rabbitPlayer.jumping) {
+      rabbitGameOver();
+      return;
+    }
+  }
+}
+
+function rabbitGameOver() {
+  rabbitRunning = false;
+  if (rabbitAnimation) cancelAnimationFrame(rabbitAnimation);
+
+  drawRabbit();
+
+  rabbitCtx.fillStyle = "rgba(8,8,17,.68)";
+  rabbitCtx.fillRect(0, 0, rabbitCanvas.width, rabbitCanvas.height);
+
+  rabbitCtx.fillStyle = "#fff";
+  rabbitCtx.textAlign = "center";
+  rabbitCtx.font = "800 42px Arial";
+  rabbitCtx.fillText("Game Over", rabbitCanvas.width / 2, 210);
+
+  rabbitCtx.font = "20px Arial";
+  rabbitCtx.fillText(
+    "Score: " + rabbitScore,
+    rabbitCanvas.width / 2,
+    250
+  );
+
+  rabbitCtx.font = "700 18px Arial";
+  rabbitCtx.fillStyle = "#3985ff";
+  rabbitCtx.fillText(
+    "Tap to try again",
+    rabbitCanvas.width / 2,
+    300
+  );
+}
+
+function drawRabbit() {
+  const ctx = rabbitCtx;
+  const w = rabbitCanvas.width;
+  const h = rabbitCanvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Sky
+  const sky = ctx.createLinearGradient(0, 0, 0, h);
+  sky.addColorStop(0, "#111a36");
+  sky.addColorStop(1, "#171726");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, w, h);
+
+  // Moon
+  ctx.beginPath();
+  ctx.arc(760, 85, 38, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255,255,255,.85)";
+  ctx.fill();
+
+  // Ground
+  ctx.fillStyle = "#24243a";
+  ctx.fillRect(0, 432, w, h - 432);
+
+  // Ground line
+  ctx.fillStyle = "#3985ff";
+  ctx.fillRect(0, 432, w, 4);
+
+  // Holes
+  rabbitHoles.forEach(hole => {
+    ctx.fillStyle = "#080811";
+    ctx.beginPath();
+    ctx.ellipse(
+      hole.x + hole.w / 2,
+      437,
+      hole.w / 2,
+      17,
+      0,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
+  });
+
+  // Rabbit
+  const r = rabbitPlayer;
+  ctx.save();
+  ctx.translate(r.x, r.y);
+
+  // ears
+  ctx.fillStyle = "#f1f1f5";
+  ctx.beginPath();
+  ctx.roundRect(8, -17, 10, 24, 6);
+  ctx.roundRect(24, -17, 10, 24, 6);
+  ctx.fill();
+
+  // body
+  ctx.beginPath();
+  ctx.arc(21, 24, 21, 0, Math.PI * 2);
+  ctx.fill();
+
+  // face
+  ctx.beginPath();
+  ctx.arc(31, 12, 14, 0, Math.PI * 2);
+  ctx.fill();
+
+  // eye
+  ctx.fillStyle = "#080811";
+  ctx.beginPath();
+  ctx.arc(35, 9, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // nose
+  ctx.beginPath();
+  ctx.arc(43, 14, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+/* Register the service worker so PlayBlocks itself can load offline. */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+
+/* Show the offline page immediately when the app is already offline. */
+if (!navigator.onLine) {
+  showOfflineScreen();
+}
+
+</script>
+
+</body>
+        </html>
